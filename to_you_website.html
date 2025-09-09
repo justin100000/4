@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy 4 Months, My Love 💖</title>
+  <meta name="description" content="A tiny interactive love‑letter website with cute easter eggs, a photo wall, and confetti hearts." />
+  <meta name="theme-color" content="#ff6b9e" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --pink:#ff6b9e; /* main */
+      --peach:#ffb199; /* accent */
+      --soft:#ffe7ef; /* bg tint */
+      --ink:#342e37;  /* text */
+      --card:#ffffffcc; /* glass card */
+      --shadow: 0 20px 45px rgba(0,0,0,.12);
+      --radius: 22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; 
+      font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background: radial-gradient(1200px 800px at 15% -10%, #ffd1dc 0%, transparent 50%),
+                  radial-gradient(1000px 700px at 100% 0%, #ffd9cc 0%, transparent 55%),
+                  linear-gradient(180deg, #fff 0%, #ffeef5 100%);
+      overflow-x:hidden;
+    }
+    .wrap{max-width:1000px;margin:0 auto;padding:28px}
+
+    header.hero{
+      display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;
+      text-align:center; padding:36px 18px 18px;
+    }
+    .badge{display:inline-flex;gap:8px;align-items:center;background:var(--soft);border:1px dashed var(--peach);color:#b64d6f;padding:8px 14px;border-radius:999px;font-weight:600;font-size:.95rem}
+    .title{font-family:Caveat,system-ui; font-size:clamp(2rem, 5.8vw, 4rem); line-height:1.1; margin:6px 0;color:#db2672; letter-spacing:.5px}
+    .subtitle{opacity:.8}
+
+    .card{
+      background:var(--card); backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,.75);
+      border-radius:var(--radius); box-shadow:var(--shadow);
+    }
+    .center-card{max-width:880px;margin:20px auto;padding:22px}
+
+    .cta{display:inline-flex;align-items:center;gap:10px;border:none;background:linear-gradient(90deg,var(--pink),var(--peach));
+      color:#fff;padding:14px 20px;border-radius:999px;font-weight:700;cursor:pointer;transition:transform .1s ease, filter .2s ease; box-shadow: 0 10px 25px rgba(255,107,158,.35)}
+    .cta:hover{transform:translateY(-1px)}
+    .cta:active{transform:translateY(1px)}
+    .ghost{background:#fff;color:var(--pink);border:2px solid var(--pink)}
+
+    /* Sections slider */
+    .steps{position:relative;overflow:hidden}
+    .step{display:none;padding:18px}
+    .step.active{display:block;animation:fadeUp .45s ease both}
+
+    @keyframes fadeUp{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:translateY(0)}}
+
+    /* Letter */
+    .letter{
+      font-size:1.05rem; line-height:1.8; white-space:pre-wrap; min-height:180px; position:relative;
+    }
+    .type-caret{position:absolute; width:2px; height:1.2em; background:var(--pink); display:inline-block; animation:blink 1s steps(1,end) infinite;}
+    @keyframes blink{50%{opacity:0}}
+
+    .nav{display:flex;justify-content:space-between;gap:12px;margin-top:16px}
+
+    /* Gallery */
+    .gallery{ display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-top:10px}
+    .polaroid{
+      background:#fff; padding:10px 10px 20px; border-radius:16px; box-shadow:0 15px 35px rgba(0,0,0,.12);
+      transform:rotate(var(--tilt)); transition:transform .25s ease; position:relative; overflow:hidden
+    }
+    .polaroid:hover{ transform:rotate(0) scale(1.02)}
+    .polaroid img{ width:100%; height:220px; object-fit:cover; border-radius:12px}
+    .caption{ text-align:center; margin-top:8px; font-size:.92rem; opacity:.8}
+
+    /* Slider */
+    .slider{position:relative; display:flex; align-items:center; justify-content:center; gap:12px; margin-top:10px}
+    .slide{display:none}
+    .slide.active{display:block;}
+    .dots{display:flex; gap:8px;justify-content:center;margin-top:10px}
+    .dot{width:10px;height:10px;border-radius:50%;background:#ffd3e1;border:2px solid #ff9fbd;cursor:pointer}
+    .dot.active{background:var(--pink)}
+    .arrow{border:none;background:#fff;border:2px solid #ffd3e1;border-radius:12px;padding:8px 10px;cursor:pointer}
+
+    /* Hidden hearts (treasure hunt) */
+    .hunt{display:flex;align-items:center;gap:8px;flex-wrap:wrap; margin-top:8px}
+    .tag{background:#fff;border:1px solid #ffd3e1;color:#b64d6f;padding:6px 10px;border-radius:999px;font-size:.9rem}
+    .hidden-heart{position:relative;cursor:pointer;user-select:none}
+    .hidden-heart::before{content:"❤"; color:#ff5a93; opacity:.35; transition:opacity .2s}
+    .hidden-heart.found::before{opacity:1; filter:drop-shadow(0 2px 6px rgba(255,90,147,.55))}
+
+    /* Overlay for secrets */
+    .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(255,241,246,.8); backdrop-filter: blur(4px); z-index:50}
+    .overlay.active{display:grid}
+    .secret{max-width:760px}
+
+    /* Floating hearts background */
+    .float-area{pointer-events:none; position:fixed; inset:0; overflow:hidden; z-index:0}
+    .heart{position:absolute; font-size:14px; animation:floatUp linear forwards; opacity:.9}
+    @keyframes floatUp{ 0%{ transform:translateY(110vh) scale(.9); opacity:0 } 10%{opacity:1} 100%{ transform:translateY(-10vh) scale(1.3); opacity:0}}
+
+    /* Bottom toolbar */
+    .toolbar{position:fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:5}
+    .fab{border:none; background:linear-gradient(120deg,var(--pink),var(--peach)); color:#fff; width:48px;height:48px;border-radius:12px; box-shadow:var(--shadow); cursor:pointer; font-size:20px}
+    .fab.secondary{background:#fff;color:var(--pink);border:2px solid var(--pink)}
+
+    footer{margin:40px 0 80px; text-align:center; opacity:.7}
+
+    /* Small screens tweaks */
+    @media (max-width:520px){
+      .polaroid img{height:180px}
+    }
+  </style>
+</head>
+<body>
+  <!--
+    💌 HOW TO CUSTOMIZE
+    1) Put your photo URLs in the IMAGES array below. You can use local paths like ./img/1.jpg or https links.
+       Tip: For best results, use vertical photos ~800x1000px.
+    2) Edit the REASONS list for the secret "4 reasons" overlay.
+    3) Personalize the heading via URL params: ?name=Sophia&m=4  (m = months)
+    4) Deploy: drag this file (and an optional /img folder) to https://app.netlify.com/drop — you'll get a shareable link.
+       Or push to a GitHub repo and enable GitHub Pages.
+  -->
+
+  <div class="float-area" id="float-area" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <header class="hero">
+      <div class="badge"><span class="hidden-heart" id="h1" aria-label="hidden heart" title="(psst) click me"></span> Tiny Love Site · made for you <span class="hidden-heart" id="h2"></span></div>
+      <h1 class="title" id="main-title" title="Click me 4 times for a secret">Happy 4 Months, my love! 💖</h1>
+      <p class="subtitle">A little interactive letter you can tap, explore, and smile through.</p>
+
+      <div class="center-card card steps" id="steps">
+        <!-- Step 1: cover -->
+        <section class="step active" id="step-1" aria-label="Cover">
+          <div style="padding:10px 10px 4px; text-align:center">
+            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=1600&auto=format&fit=crop" width="960" height="540" alt="soft pink hearts" style="width:100%;height:auto;border-radius:16px;box-shadow:0 12px 28px rgba(0,0,0,.12)">
+          </div>
+          <p style="text-align:center;margin:14px 6px 4px">Press the envelope to open your letter ✉️</p>
+          <div class="nav" style="justify-content:center">
+            <button class="cta" id="open-letter">💌 Open Letter</button>
+            <button class="cta ghost" id="toggle-hearts" title="Release floating hearts">❤ Hearts</button>
+          </div>
+        </section>
+
+        <!-- Step 2: letter -->
+        <section class="step" id="step-2" aria-label="Letter">
+          <div class="letter" id="letter"></div>
+          <div class="nav">
+            <button class="cta ghost" data-go="1">← Back</button>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span class="tag">psst: try the ❤ buttons & the hearts in the header</span>
+              <button class="cta" data-go="3">Next → Moments</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3: moments + slider -->
+        <section class="step" id="step-3" aria-label="Moments">
+          <h3 style="margin:6px 6px 8px">Our Little Moments</h3>
+          <div class="slider card" style="padding:12px" id="slider">
+            <button class="arrow" id="prev">⟵</button>
+            <img id="slide-img" class="slide active" alt="Our moment" style="border-radius:12px; width:100%; max-height:420px; object-fit:cover">
+            <button class="arrow" id="next">⟶</button>
+          </div>
+          <div class="dots" id="dots" role="tablist" aria-label="slide dots"></div>
+
+          <div class="hunt">
+            <span class="tag">Treasure Hunt: Find 3 hidden hearts <span id="found-count">0</span>/3</span>
+            <span class="hidden-heart" id="h3" title="(psst) I'm one"></span>
+          </div>
+
+          <div class="nav" style="margin-top:16px">
+            <button class="cta ghost" data-go="2">← Back</button>
+            <button class="cta" data-go="4">Photo Wall →</button>
+          </div>
+        </section>
+
+        <!-- Step 4: photo wall -->
+        <section class="step" id="step-4" aria-label="Photo Wall">
+          <h3 style="margin:6px 6px 8px">Photo Wall</h3>
+          <p class="subtitle" style="margin:0 6px 8px">Tap any photo to pop it out ✨</p>
+          <div class="gallery" id="gallery"></div>
+          <div class="nav">
+            <button class="cta ghost" data-go="3">← Back</button>
+            <button class="cta" id="finish">Finish 🎉</button>
+          </div>
+        </section>
+      </div>
+    </header>
+
+    <footer>
+      Made with 💗 by <span id="byline">your person</span>. Press ↑ ↑ ↓ ↓ ← → ← → B A for a surprise.
+    </footer>
+  </div>
+
+  <!-- Secret overlays -->
+  <div class="overlay" id="reasons-overlay" role="dialog" aria-modal="true">
+    <div class="secret card" style="padding:22px">
+      <h2 style="margin:4px 0 10px">4 Reasons I adore you</h2>
+      <ol id="reasons" style="line-height:1.9; margin:0 0 10px 18px"></ol>
+      <div style="display:flex;justify-content:flex-end"><button class="cta ghost" id="close-reasons">Close</button></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="treasure-overlay" role="dialog" aria-modal="true">
+    <div class="secret card" style="padding:22px; text-align:center">
+      <h2 style="margin:0 0 6px">You found all the hearts! 🗝️</h2>
+      <p style="margin-top:0">Here’s a secret: I love you more every single day. Thanks for making these <span id="months-mini">4</span> months so special. 💞</p>
+      <div style="display:flex;justify-content:center"><button class="cta" id="close-treasure">Aww, thanks 💗</button></div>
+    </div>
+  </div>
+
+  <!-- Toolbar (customize / copy link) -->
+  <div class="toolbar" aria-hidden="false">
+    <button class="fab" id="fab-custom" title="Customize name & months">⚙️</button>
+    <button class="fab secondary" id="fab-copy" title="Copy current link">🔗</button>
+  </div>
+
+  <script>
+    // ====== CONFIG ======
+    // Replace with YOUR photos (local paths or https URLs). Vertical looks extra cute.
+    const IMAGES = [
+      // TODO: replace these with your girlfriend's photos (keep quotes). Examples:
+      // "./img/beach-day.jpg",
+      // "https://i.imgur.com/yourPhoto1.jpg",
+      "https://picsum.photos/seed/rose/900/1200",
+      "https://picsum.photos/seed/sunshine/900/1200",
+      "https://picsum.photos/seed/giggles/900/1200",
+      "https://picsum.photos/seed/coffee/900/1200",
+      "https://picsum.photos/seed/latewalks/900/1200",
+      "https://picsum.photos/seed/polaroid/900/1200",
+    ];
+
+    const REASONS = [
+      "Your laugh is my favorite sound.",
+      "You turn ordinary moments into little adventures.",
+      "Your kindness inspires me to be better.",
+      "Being with you feels like home."
+    ];
+
+    // ====== URL Params (name & months) ======
+    const params = new URLSearchParams(location.search);
+    const NAME = (params.get('name') || 'my love').trim();
+    const MONTHS = Math.max(1, parseInt(params.get('m') || '4', 10) || 4);
+
+    // Apply dynamic bits
+    const title = document.getElementById('main-title');
+    const monthsMini = document.getElementById('months-mini');
+    title.textContent = `Happy ${MONTHS} Months, ${NAME}! 💖`;
+    monthsMini.textContent = MONTHS;
+    document.title = `Happy ${MONTHS} Months, ${NAME}! 💖`;
+    document.getElementById('byline').textContent = (params.get('from') || 'Justin');
+
+    // ====== Typewriter Letter ======
+    const letterEl = document.getElementById('letter');
+    const letterText = `Hi ${NAME},\n\nHappy ${MONTHS} months! I’m so grateful for you — for your smile, your warmth, and all the tiny moments that feel big because they’re with you.\n\nThank you for the laughs, the late-night talks, and the way you make even ordinary days sparkle. I love how you care, how you dream, and how we’re slowly building our own little universe.\n\nHere’s to us: to more walks, more photos, and more memories I’ll replay forever.\n\nAlways,\nYour person ♡`;
+
+    function typewriter(el, text, speed=22){
+      el.textContent = '';
+      const caret = document.createElement('span');
+      caret.className = 'type-caret';
+      el.appendChild(caret);
+      let i=0;
+      const tick = () => {
+        if(i < text.length){
+          const ch = text[i++];
+          caret.insertAdjacentText('beforebegin', ch);
+          setTimeout(tick, ch==='\n'? 120 : speed);
+        } else {
+          caret.remove();
+        }
+      };
+      tick();
+    }
+
+    // ====== Steps Nav ======
+    const steps = [...document.querySelectorAll('.step')];
+    function go(n){ steps.forEach((s,i)=> s.classList.toggle('active', i===n-1)); }
+    document.querySelectorAll('[data-go]').forEach(btn=> btn.addEventListener('click', e=> go(parseInt(btn.dataset.go,10))));
+    document.getElementById('open-letter').addEventListener('click', ()=>{ go(2); typewriter(letterEl, letterText); burstHearts(24); });
+
+    // ====== Slider ======
+    const slideImg = document.getElementById('slide-img');
+    const dotsBox = document.getElementById('dots');
+    let idx = 0;
+    function renderSlide(){ slideImg.src = IMAGES[idx]; updateDots(); }
+    function prev(){ idx = (idx - 1 + IMAGES.length) % IMAGES.length; renderSlide(); }
+    function next(){ idx = (idx + 1) % IMAGES.length; renderSlide(); }
+    function updateDots(){
+      dotsBox.innerHTML = '';
+      IMAGES.forEach((_,i)=>{
+        const d = document.createElement('button');
+        d.className = 'dot' + (i===idx?' active':'');
+        d.setAttribute('aria-label', `show slide ${i+1}`);
+        d.addEventListener('click', ()=>{ idx=i; renderSlide(); });
+        dotsBox.appendChild(d);
+      });
+    }
+    document.getElementById('prev').addEventListener('click', prev);
+    document.getElementById('next').addEventListener('click', next);
+    renderSlide();
+
+    // ====== Photo Wall ======
+    const gal = document.getElementById('gallery');
+    function randTilt(){ return (Math.random() * 10 - 5).toFixed(1) + 'deg'; }
+    function renderGallery(){
+      gal.innerHTML = '';
+      IMAGES.forEach((src, i)=>{
+        const card = document.createElement('figure');
+        card.className = 'polaroid';
+        card.style.setProperty('--tilt', randTilt());
+        const img = document.createElement('img'); img.loading='lazy'; img.src = src; img.alt = `memory ${i+1}`;
+        const cap = document.createElement('figcaption'); cap.className='caption'; cap.textContent = 'click to pop';
+        card.append(img, cap);
+        card.addEventListener('click', ()=>{
+          card.style.transform = 'rotate(0) scale(1.06)';
+          setTimeout(()=> card.style.transform = 'rotate(var(--tilt)) scale(1)', 900);
+          burstHearts(12);
+        });
+        gal.appendChild(card);
+      });
+    }
+    renderGallery();
+
+    // ====== Hidden Hearts Hunt ======
+    const hiddenHearts = ['h1','h2','h3'].map(id=> document.getElementById(id));
+    let found = 0;
+    hiddenHearts.forEach(h => h.addEventListener('click', ()=>{
+      if(!h.classList.contains('found')){
+        h.classList.add('found');
+        found++; document.getElementById('found-count').textContent = found;
+        burstHearts(16);
+        if(found===hiddenHearts.length){
+          document.getElementById('treasure-overlay').classList.add('active');
+          setTimeout(()=> burstHearts(42), 250);
+        }
+      }
+    }));
+    document.getElementById('close-treasure').addEventListener('click', ()=>{
+      document.getElementById('treasure-overlay').classList.remove('active');
+    });
+
+    // ====== 4‑click secret (reasons) ======
+    const reasonsList = document.getElementById('reasons');
+    REASONS.forEach(r=>{
+      const li = document.createElement('li'); li.textContent=r; reasonsList.appendChild(li);
+    });
+    let clickCount=0; title.addEventListener('click', ()=>{
+      clickCount++; if(clickCount>=4){
+        document.getElementById('reasons-overlay').classList.add('active');
+        clickCount=0; burstHearts(28);
+      }
+    });
+    document.getElementById('close-reasons').addEventListener('click', ()=>{
+      document.getElementById('reasons-overlay').classList.remove('active');
+    });
+
+    // ====== Floating hearts ======
+    const floatArea = document.getElementById('float-area');
+    let heartTimer = null;
+    function spawnHeart(){
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.textContent = '❤';
+      const size = 12 + Math.random()*24; // 12..36
+      h.style.left = Math.random()*100 + 'vw';
+      h.style.fontSize = size + 'px';
+      h.style.animationDuration = (6 + Math.random()*6) + 's';
+      floatArea.appendChild(h);
+      setTimeout(()=> h.remove(), 12000);
+    }
+    function toggleHearts(){
+      if(heartTimer){ clearInterval(heartTimer); heartTimer=null; return; }
+      for(let i=0;i<16;i++) spawnHeart();
+      heartTimer = setInterval(spawnHeart, 500);
+    }
+    document.getElementById('toggle-hearts').addEventListener('click', toggleHearts);
+
+    function burstHearts(n=20){
+      for(let i=0;i<n;i++) setTimeout(spawnHeart, i*35);
+    }
+
+    // ====== Konami code ======
+    const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    let buffer = [];
+    addEventListener('keydown', (e)=>{
+      buffer.push(e.key);
+      if(buffer.length>KONAMI.length) buffer.shift();
+      if(KONAMI.every((k,i)=> buffer[i]?.toLowerCase()===k.toLowerCase())){
+        burstHearts(80);
+        buffer = [];
+      }
+    });
+
+    // ====== Toolbar: customize & copy link ======
+    document.getElementById('fab-custom').addEventListener('click', ()=>{
+      const newName = prompt('Her name for the banner:', NAME) || NAME;
+      const newMonths = parseInt(prompt('How many months?', MONTHS) || MONTHS, 10) || MONTHS;
+      const url = new URL(location.href);
+      url.searchParams.set('name', newName);
+      url.searchParams.set('m', newMonths);
+      history.replaceState(null, '', url.toString());
+      title.textContent = `Happy ${newMonths} Months, ${newName}! 💖`;
+      monthsMini.textContent = newMonths;
+      document.title = `Happy ${newMonths} Months, ${newName}! 💖`;
+    });
+
+    document.getElementById('fab-copy').addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(location.href); alert('Link copied! Send it to her 💘'); }
+      catch{ prompt('Copy this link:', location.href); }
+    });
+
+    // Finish button flair
+    document.getElementById('finish').addEventListener('click', ()=>{
+      burstHearts(64);
+      alert('I love you. Today, tomorrow, always. 💕');
+    });
+  </script>
+</body>
+</html>
